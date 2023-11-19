@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/schFragment"
+        android:name="com.example.newproject.SchFragment"
+        android:label="fragment_sch"
+        tools:layout="@layout/fragment_sch" />
+    <fragment
+        android:id="@+id/timeFragment"
+        android:name="com.example.newproject.TimeFragment"
+        android:label="fragment_time"
+        tools:layout="@layout/fragment_time" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.newproject.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/friendFragment"
+        android:name="com.example.newproject.FriendFragment"
+        android:label="fragment_friend"
+        tools:layout="@layout/fragment_friend" />
+    <fragment
+        android:id="@+id/addFragment"
+        android:name="com.example.newproject.AddFragment"
+        android:label="fragment_add"
+        tools:layout="@layout/fragment_add" />
+</navigation>
