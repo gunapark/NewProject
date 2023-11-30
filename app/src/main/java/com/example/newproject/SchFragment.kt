@@ -5,71 +5,100 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.CalendarView
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newproject.databinding.FragmentSchBinding
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import java.util.Calendar
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+data class Event(val date: Long, val time: String, val schedule: String)
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SchFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class SchFragment : Fragment() {
+class EventAdapter(private val events: MutableList<Event>) : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
 
-    private lateinit var binding:FragmentSchBinding
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapeter: Adapter
-
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    var currentDate: Long = System.currentTimeMillis()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
         }
+    class EventViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val time: TextView = view.findViewById(R.id.item_time)
+        val schedule: TextView = view.findViewById(R.id.item_sch)
     }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
+        return EventViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
+        val event = getEventsForCurrentDate()[position]
+        holder.time.text = event.time
+        holder.schedule.text = event.schedule
+    }
+
+    override fun getItemCount() = getEventsForCurrentDate().size
+
+    fun addEvent(event: Event) {
+        events.add(event)
+        events.sortBy {it.time}
+        notifyDataSetChanged()
+    }
+
+
+    private fun getEventsForCurrentDate(): List<Event> {
+        val calendar1 = Calendar.getInstance().apply { timeInMillis = currentDate }
+        return events.filter {
+            val calendar2 = Calendar.getInstance().apply { timeInMillis = it.date }
+            calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) &&
+                    calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH) &&
+                    calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH)
+        }
+    }
+}
+
+class SchFragment : Fragment(), ScheduleDialogFragment.OnScheduleAddedListener {
+    private lateinit var binding: FragmentSchBinding
+    private lateinit var adapter: EventAdapter
+    private var selectedDate: Long = System.currentTimeMillis()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSchBinding.inflate(inflater, container, false)
         val calendarView: CalendarView = binding.calendarView
         calendarView.date = System.currentTimeMillis()
-        // Inflate the layout for this fragment
+
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            val calendar = Calendar.getInstance()
+            calendar.set(year, month, dayOfMonth)
+            selectedDate = calendar.timeInMillis
+        }
+        adapter = EventAdapter(ArrayList())
 
         binding.addEventButton.setOnClickListener {
-
+            val dialog = ScheduleDialogFragment()
+            dialog.setOnScheduleAddedListener(this)
+            dialog.show(childFragmentManager, "ScheduleDialogFragment")
         }
-        return inflater.inflate(R.layout.fragment_sch, container, false)
+
+        val recyclerView = binding.recSch
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            val calendar = Calendar.getInstance()
+            calendar.set(year, month, dayOfMonth)
+            selectedDate = calendar.timeInMillis
+            adapter.currentDate = selectedDate
+        }
+
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SchFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SchFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onScheduleAdded(time: String, schedule: String) {
+        val event = Event(selectedDate, time, schedule)
+        adapter.addEvent(event)
     }
 }

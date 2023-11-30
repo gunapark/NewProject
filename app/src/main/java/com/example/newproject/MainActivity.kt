@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         binding.bottomNavigationView.setupWithNavController(navController)
-        // Navigation 그래프 설정
+
+
     }
 }
