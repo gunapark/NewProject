@@ -26,10 +26,11 @@ private const val ARG_PARAM2 = "param2"
  */
 class ScheduleDialogFragment : DialogFragment() {
     interface OnScheduleAddedListener {
-        fun onScheduleAdded(time: String, schedule: String)
+        fun onScheduleAdded(starttime: String, endtime: String, schedule: String)
     }
     private lateinit var listener: OnScheduleAddedListener
-    private lateinit var timeEditText: EditText
+    private lateinit var starttimeEditText: EditText
+    private lateinit var endtimeEditText: EditText
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
@@ -37,16 +38,21 @@ class ScheduleDialogFragment : DialogFragment() {
             val inflater = requireActivity().layoutInflater;
             val view = inflater.inflate(R.layout.fragment_schedule_dialog, null)
 
-            timeEditText = view.findViewById(R.id.time)
-            timeEditText.setOnClickListener{
-                showTimePickerDialog()
+            starttimeEditText = view.findViewById(R.id.time)
+            endtimeEditText = view.findViewById(R.id.time2)
+            starttimeEditText.setOnClickListener{
+                showTimePickerDialog(starttimeEditText)
+            }
+            endtimeEditText.setOnClickListener {
+                showTimePickerDialog(endtimeEditText)
             }
             builder.setView(view)
                 .setPositiveButton("추가",
                     DialogInterface.OnClickListener { dialog, id ->
-                        val time = timeEditText.text.toString()
+                        val starttime = starttimeEditText.text.toString()
+                        val endtime = endtimeEditText.text.toString()
                         val schedule = view.findViewById<EditText>(R.id.schedule).text.toString()
-                        listener.onScheduleAdded(time, schedule)
+                        listener.onScheduleAdded(starttime, endtime, schedule)
                     })
                 .setNegativeButton("취소",
                     DialogInterface.OnClickListener { dialog, id ->
@@ -56,14 +62,14 @@ class ScheduleDialogFragment : DialogFragment() {
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    private fun showTimePickerDialog() {
+    private fun showTimePickerDialog(editText: EditText) {
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
 
         val timePickerDialog = TimePickerDialog(requireContext(), { _, selectedHour, selectedMinute ->
             val selectedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
-            timeEditText.setText(selectedTime)
+            editText.setText(selectedTime)
         }, hour, minute, true)
 
         timePickerDialog.show()

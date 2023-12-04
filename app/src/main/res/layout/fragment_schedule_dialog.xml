@@ -7,8 +7,15 @@
         android:id="@+id/time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="none"
-        android:hint="시간" />
+        android:hint="시작시간"
+        android:inputType="none" />
+
+    <EditText
+        android:id="@+id/time2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="종료시간"
+        android:inputType="none" />
 
     <EditText
         android:id="@+id/schedule"
