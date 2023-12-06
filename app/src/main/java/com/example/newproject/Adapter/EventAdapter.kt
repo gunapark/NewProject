@@ -1,10 +1,12 @@
-package com.example.newproject
+package com.example.newproject.Adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.newproject.Event
+import com.example.newproject.R
 
 class EventAdapter: RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
     var events: List<Event> = listOf()

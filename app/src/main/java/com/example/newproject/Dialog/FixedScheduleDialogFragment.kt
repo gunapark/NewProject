@@ -1,7 +1,6 @@
-package com.example.newproject
+package com.example.newproject.Dialog
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +8,9 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.findFragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.newproject.Event
+import com.example.newproject.R
 import com.example.newproject.viewmodel.Schviewmodel
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -32,6 +32,14 @@ class FixedScheduleDialogFragment : DialogFragment() {
     private lateinit var cancelButton: Button
     private lateinit var viewModel: Schviewmodel
 
+    override fun onStart() {
+        super.onStart()
+        dialog?.let{
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT
+            it.window?.setLayout(width,height)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {

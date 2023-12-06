@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import com.example.newproject.Event
 import com.example.newproject.repository.SchRepository
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -36,7 +37,7 @@ class Schviewmodel: ViewModel() {
     }
     fun deleteEvent(event:Event){
         val userId = "myId"
-        repository.deletEventFromDatabase(userId, event)
+        repository.deleteEventFromDatabase(userId, event)
         val updateEvent = _events.value ?: mutableListOf()
         updateEvent.remove(event)
         _events.value = updateEvent
@@ -52,6 +53,28 @@ class Schviewmodel: ViewModel() {
             _events.value = updatedEvents
         }
     }
+    fun deleteMatchingEvents(event: Event) {
+        val userId = "myId"
+        val allEventsLiveData = repository.getAllEvents(userId) // 데이터베이스에서 모든 이벤트를 가져옴
+
+        allEventsLiveData.observeForever { allEvents ->
+            val eventsToDelete = allEvents.filter {
+                it.startTime == event.startTime &&
+                        it.endTime == event.endTime &&
+                        it.schedule == event.schedule &&
+                        it.isFixed
+            }
+            for (eventToDelete in eventsToDelete) {
+                repository.deleteEventFromDatabase(userId, eventToDelete)
+            }
+            val updatedEventsLiveData = repository.getAllEvents(userId)
+            updatedEventsLiveData.observeForever { updatedEvents ->
+                _events.value = updatedEvents
+            }
+        }
+    }
+
+
 
 
     fun getEventsForCurrentDate(date: LocalDate): LiveData<List<Event>> {
@@ -62,7 +85,7 @@ class Schviewmodel: ViewModel() {
         }
     }
     fun getEventsForWeek(userId: String, startOfWeek: LocalDate): LiveData<List<Event>> {
-        val endOfWeek = startOfWeek.plusDays(7)
+        val endOfWeek = startOfWeek.plusDays(6)
         return repository.getEventsBetween(userId, startOfWeek, endOfWeek)
     }
 

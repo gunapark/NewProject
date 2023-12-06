@@ -1,16 +1,14 @@
-package com.example.newproject
+package com.example.newproject.Dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
+import com.example.newproject.Event
+import com.example.newproject.R
 import java.util.Calendar
 import java.util.Locale
 
