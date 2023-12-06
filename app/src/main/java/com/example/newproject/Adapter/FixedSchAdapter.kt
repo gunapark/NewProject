@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import com.example.newproject.Event
+import com.example.newproject.data.Event
 import com.example.newproject.R
 import com.example.newproject.viewmodel.Schviewmodel
 import java.time.DayOfWeek

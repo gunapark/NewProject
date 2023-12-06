@@ -2,16 +2,13 @@ package com.example.newproject.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.newproject.Event
+import com.example.newproject.data.Event
 import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.*
-import java.util.Calendar
 
 class SchRepository {
     val database = Firebase.database

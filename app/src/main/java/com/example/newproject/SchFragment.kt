@@ -13,6 +13,7 @@ import java.util.Calendar
 import com.example.newproject.viewmodel.Schviewmodel
 import com.example.newproject.Adapter.EventAdapter
 import com.example.newproject.Dialog.ScheduleDialogFragment
+import com.example.newproject.data.Event
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

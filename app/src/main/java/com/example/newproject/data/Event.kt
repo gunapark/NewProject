@@ -1,4 +1,4 @@
-package com.example.newproject
+package com.example.newproject.data
 
 import androidx.lifecycle.LiveData
 import com.google.firebase.database.Exclude

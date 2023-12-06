@@ -5,13 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
-import com.example.newproject.Event
+import com.example.newproject.data.Event
 import com.example.newproject.repository.SchRepository
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
 
 class Schviewmodel: ViewModel() {
     private var _events = MutableLiveData<MutableList<Event>>(mutableListOf())
@@ -35,7 +32,7 @@ class Schviewmodel: ViewModel() {
         updatedEvents.add(event)
         _events.value = updatedEvents
     }
-    fun deleteEvent(event:Event){
+    fun deleteEvent(event: Event){
         val userId = "myId"
         repository.deleteEventFromDatabase(userId, event)
         val updateEvent = _events.value ?: mutableListOf()

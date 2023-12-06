@@ -9,7 +9,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.newproject.Event
+import com.example.newproject.data.Event
 import com.example.newproject.R
 import com.example.newproject.viewmodel.Schviewmodel
 import java.time.DayOfWeek

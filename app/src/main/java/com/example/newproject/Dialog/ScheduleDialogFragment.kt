@@ -7,7 +7,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
-import com.example.newproject.Event
+import com.example.newproject.data.Event
 import com.example.newproject.R
 import java.util.Calendar
 import java.util.Locale
