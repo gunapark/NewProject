@@ -16,19 +16,44 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.Calendar
 import com.example.newproject.viewmodel.Schviewmodel
 import com.example.newproject.EventAdapter
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 
-
-
-class SchFragment : Fragment(), ScheduleDialogFragment.OnScheduleAddedListener {
+class SchFragment : Fragment(), ScheduleDialogFragment.OnScheduleAddedListener, EventAdapter.OnItemActionListener {
     private lateinit var binding: FragmentSchBinding
     private lateinit var adapter: EventAdapter
     private lateinit var viewModel: Schviewmodel
-    private var selectedDate: Long = System.currentTimeMillis()
-    private fun updateEvents(date: Long) {
+    private var selectedDate: LocalDate = LocalDate.now()
+
+    private fun updateEvents(date: LocalDate) {
         viewModel.getEventsForCurrentDate(date).observe(viewLifecycleOwner, { events ->
             adapter.setEvents(events)
         })
+    }
+
+    override fun onEditClicked(event: Event) {
+        val dialog = ScheduleDialogFragment()
+        dialog.setEvent(event)
+        dialog.setOnScheduleAddedListener(object : ScheduleDialogFragment.OnScheduleAddedListener {
+            override fun onScheduleAdded(startTime: String, endTime: String, schedule: String) {
+                event.startTime = startTime
+                event.endTime = endTime
+                event.schedule = schedule
+                viewModel.updateEvent(event)
+                updateEvents(selectedDate)
+            }
+        })
+        dialog.show(childFragmentManager, "ScheduleDialogFragment")
+    }
+
+
+    override fun onDeleteClicked(event: Event) {
+        viewModel.deleteEvent(event)
+        updateEvents(selectedDate)
     }
 
 
@@ -40,18 +65,19 @@ class SchFragment : Fragment(), ScheduleDialogFragment.OnScheduleAddedListener {
     ): View {
         binding = FragmentSchBinding.inflate(inflater, container, false)
         val calendarView: CalendarView = binding.calendarView
-        calendarView.date = selectedDate
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val calendar = Calendar.getInstance()
             calendar.set(year, month, dayOfMonth)
-            selectedDate = calendar.timeInMillis
+            selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
             updateEvents(selectedDate)
         }
         viewModel = ViewModelProvider(this)[Schviewmodel::class.java]
+        viewModel.init(this)
         adapter = EventAdapter()
+        adapter.setOnItemActionListener(this)
 
-        binding.addEventButton.setOnClickListener {
+        binding.timeSchAdd.setOnClickListener {
             val dialog = ScheduleDialogFragment()
             dialog.setOnScheduleAddedListener(this)
             dialog.show(childFragmentManager, "ScheduleDialogFragment")
@@ -67,21 +93,8 @@ class SchFragment : Fragment(), ScheduleDialogFragment.OnScheduleAddedListener {
     }
 
     override fun onScheduleAdded(startTime: String, endTime:String, schedule: String) {
-        val event = Event(selectedDate, startTime, endTime, schedule)
-        val existingEvents = viewModel.getEventsForCurrentDate(selectedDate).value ?: emptyList()
-        if (existingEvents.any { it.overlapsWith(event) }) {
-            AlertDialog.Builder(context)
-                .setTitle("시간 중복")
-                .setMessage("선택하신 시간에는 이미 일정이 존재합니다. 그래도 추가하시겠습니까?")
-                .setPositiveButton("네") { _, _ ->
-                    viewModel.addEvent(event)
-                    updateEvents(selectedDate)
-                }
-                .setNegativeButton("아니요", null)
-                .show()
-        } else {
-            viewModel.addEvent(event)
-            updateEvents(selectedDate)
-        }
+        val event = Event(id = "", date = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), startTime, endTime, schedule)
+        viewModel.addEvent(event)
+        updateEvents(selectedDate)
     }
 }

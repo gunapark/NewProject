@@ -13,10 +13,23 @@ class EventAdapter: RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
         events = newEvent
         notifyDataSetChanged()
     }
+
+    interface OnItemActionListener{
+        fun onEditClicked(event: Event)
+        fun onDeleteClicked(event: Event)
+    }
+
+    private var onItemActionListener: OnItemActionListener? = null
+
+    fun setOnItemActionListener(listener: OnItemActionListener) {
+        onItemActionListener = listener
+    }
     class EventViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val starttime: TextView = view.findViewById(R.id.item_start_time)
         val endtime: TextView = view.findViewById(R.id.item_end_time)
         val schedule: TextView = view.findViewById(R.id.item_sch)
+        val edit: TextView = view.findViewById(R.id.edit_sch)
+        val delete: TextView = view.findViewById(R.id.del_Sch)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
@@ -29,6 +42,8 @@ class EventAdapter: RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
         holder.starttime.text = event.startTime
         holder.endtime.text = event.endTime
         holder.schedule.text = event.schedule
+        holder.edit.setOnClickListener { onItemActionListener?.onEditClicked(event) }
+        holder.delete.setOnClickListener { onItemActionListener?.onDeleteClicked(event) }
     }
 
     override fun getItemCount() = events.size

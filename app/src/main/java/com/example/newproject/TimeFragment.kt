@@ -7,69 +7,83 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newproject.databinding.FragmentTimeBinding
 import com.example.newproject.viewmodel.Schviewmodel
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.temporal.TemporalAdjusters
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TimeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TimeFragment : Fragment() {
-    private lateinit var binding: FragmentTimeBinding
+    private var _binding: FragmentTimeBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: Schviewmodel by activityViewModels()
-
-    /*
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentTimeBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentTimeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Set up the RecyclerView
-        val adapter = EventAdapter()
-        binding.recyclerView.adapter = adapter
+        val today = LocalDate.now()
+        val startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
 
-        // Observe the shared data and update the UI
+        viewModel.getEventsForWeek("myId", startOfWeek).observe(viewLifecycleOwner) { events ->
+            val sortedEvents = events.sortedBy { LocalTime.parse(it.startTime)}
+            val eventsByDayOfWeek = sortedEvents.groupBy { it.getDateAsLocalDate().dayOfWeek }
 
-        viewModel.events.observe(viewLifecycleOwner, { events ->
-            adapter.submitList(events)
-        })
+            val sundayEvents = eventsByDayOfWeek[DayOfWeek.SUNDAY] ?: emptyList()
+            val sundayAdapter = TimeAdapter(sundayEvents)
+            binding.recyclerViewSun.layoutManager = LinearLayoutManager(context)
+            binding.recyclerViewSun.adapter = sundayAdapter
 
+            val mondayEvents = eventsByDayOfWeek[DayOfWeek.MONDAY] ?: emptyList()
+            val mondayAdapter = TimeAdapter(mondayEvents)
+            binding.recyclerViewMon.layoutManager = LinearLayoutManager(context)
+            binding.recyclerViewMon.adapter = mondayAdapter
 
+            val tuesdayEvents = eventsByDayOfWeek[DayOfWeek.TUESDAY] ?: emptyList()
+            val tuesdayAdapter = TimeAdapter(tuesdayEvents)
+            binding.recyclerViewTue.layoutManager = LinearLayoutManager(context)
+            binding.recyclerViewTue.adapter = tuesdayAdapter
 
-        // Add event handling - This is just an example. You need to implement actual logic.
-        binding.addEventButton.setOnClickListener {
-            val newEvent = Event(/* ... */)
-            viewModel.addEvent(newEvent)
+            val wednesdayEvent = eventsByDayOfWeek[DayOfWeek.WEDNESDAY] ?: emptyList()
+            val wednesdayAdapter = TimeAdapter(wednesdayEvent)
+            binding.recyclerViewWed.layoutManager = LinearLayoutManager(context)
+            binding.recyclerViewWed.adapter = wednesdayAdapter
+
+            val thursdayEvent = eventsByDayOfWeek[DayOfWeek.THURSDAY] ?: emptyList()
+            val thursdayAdapter = TimeAdapter(thursdayEvent)
+            binding.recyclerViewThu.layoutManager = LinearLayoutManager(context)
+            binding.recyclerViewThu.adapter = thursdayAdapter
+
+            val fridayEvent = eventsByDayOfWeek[DayOfWeek.FRIDAY] ?: emptyList()
+            val fridayAdapter = TimeAdapter(fridayEvent)
+            binding.recyclerViewFri.layoutManager = LinearLayoutManager(context)
+            binding.recyclerViewFri.adapter = fridayAdapter
+
+            val saturdayEvent = eventsByDayOfWeek[DayOfWeek.SATURDAY] ?: emptyList()
+            val saturdayAdapter = TimeAdapter(saturdayEvent)
+            binding.recyclerViewSat.layoutManager = LinearLayoutManager(context)
+            binding.recyclerViewSat.adapter = saturdayAdapter
+
         }
+
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
-/*
+    companion object {
 
-     */
-
-     */
-
+    }
 }

@@ -14,16 +14,6 @@ import androidx.fragment.app.DialogFragment
 import java.util.Calendar
 import java.util.Locale
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ScheduleDialogFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ScheduleDialogFragment : DialogFragment() {
     interface OnScheduleAddedListener {
         fun onScheduleAdded(starttime: String, endtime: String, schedule: String)
@@ -31,15 +21,23 @@ class ScheduleDialogFragment : DialogFragment() {
     private lateinit var listener: OnScheduleAddedListener
     private lateinit var starttimeEditText: EditText
     private lateinit var endtimeEditText: EditText
+    private var eventToEdit: Event? = null
+
+    fun setEvent(event: Event){
+        eventToEdit = event
+    }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
-
             val inflater = requireActivity().layoutInflater;
             val view = inflater.inflate(R.layout.fragment_schedule_dialog, null)
 
             starttimeEditText = view.findViewById(R.id.time)
             endtimeEditText = view.findViewById(R.id.time2)
+            eventToEdit?.let { event ->
+                starttimeEditText.setText(event.startTime)
+                endtimeEditText.setText(event.endTime)
+            }
             starttimeEditText.setOnClickListener{
                 showTimePickerDialog(starttimeEditText)
             }
@@ -52,6 +50,7 @@ class ScheduleDialogFragment : DialogFragment() {
                         val starttime = starttimeEditText.text.toString()
                         val endtime = endtimeEditText.text.toString()
                         val schedule = view.findViewById<EditText>(R.id.schedule).text.toString()
+
                         listener.onScheduleAdded(starttime, endtime, schedule)
                     })
                 .setNegativeButton("취소",

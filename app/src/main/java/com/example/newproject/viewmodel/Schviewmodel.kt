@@ -1,11 +1,15 @@
 package com.example.newproject.viewmodel
 
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import com.example.newproject.Event
 import com.example.newproject.repository.SchRepository
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 class Schviewmodel: ViewModel() {
@@ -13,9 +17,10 @@ class Schviewmodel: ViewModel() {
     private val repository = SchRepository()
 
 
-    init{
+
+    fun init(lifecycleOwner: LifecycleOwner) {
         val userId = "myId"
-        repository.observeSch(userId).observeForever { events->
+        repository.observeSch(userId).observeForever { events ->
             _events.value = events
         }
     }
@@ -29,24 +34,36 @@ class Schviewmodel: ViewModel() {
         updatedEvents.add(event)
         _events.value = updatedEvents
     }
+    fun deleteEvent(event:Event){
+        val userId = "myId"
+        repository.deletEventFromDatabase(userId, event)
+        val updateEvent = _events.value ?: mutableListOf()
+        updateEvent.remove(event)
+        _events.value = updateEvent
+    }
+    fun updateEvent(event: Event) {
+        val userId = "myId"
+        repository.updateEventInDatabase(userId, event)
 
-    fun getEventsForCurrentDate(date: Long): LiveData<List<Event>> {
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = date
-        val year = calendar[Calendar.YEAR]
-        val month = calendar[Calendar.MONTH]
-        val day = calendar[Calendar.DAY_OF_MONTH]
-
-        return events.map { events ->
-            events.filter { event ->
-                val eventCalendar = Calendar.getInstance()
-                eventCalendar.timeInMillis = event.date
-                eventCalendar[Calendar.YEAR] == year &&
-                        eventCalendar[Calendar.MONTH] == month &&
-                        eventCalendar[Calendar.DAY_OF_MONTH] == day
-            }
+        val updatedEvents = _events.value ?: mutableListOf()
+        val index = updatedEvents.indexOfFirst { it.id == event.id }
+        if (index != -1) {
+            updatedEvents[index] = event
+            _events.value = updatedEvents
         }
     }
 
+
+    fun getEventsForCurrentDate(date: LocalDate): LiveData<List<Event>> {
+        return events.map { events ->
+            events.filter { event ->
+                event.getDateAsLocalDate() == date
+            }.sortedBy { LocalTime.parse(it.startTime) }
+        }
+    }
+    fun getEventsForWeek(userId: String, startOfWeek: LocalDate): LiveData<List<Event>> {
+        val endOfWeek = startOfWeek.plusDays(7)
+        return repository.getEventsBetween(userId, startOfWeek, endOfWeek)
+    }
 
 }
