@@ -93,7 +93,7 @@ class SchFragment : Fragment(), ScheduleDialogFragment.OnScheduleAddedListener, 
     }
 
     override fun onScheduleAdded(startTime: String, endTime:String, schedule: String) {
-        val event = Event(id = "", date = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), startTime, endTime, schedule)
+        val event = Event(id = "", date = selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), startTime, endTime, schedule, isFixed = false)
         viewModel.addEvent(event)
         updateEvents(selectedDate)
     }

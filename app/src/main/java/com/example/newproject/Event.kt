@@ -12,8 +12,9 @@ data class Event(
     var date: String = "",
     var startTime: String = "",
     var endTime: String = "",
-    var schedule: String= ""
-) {
+    var schedule: String= "",
+    var isFixed: Boolean = false,
+    ) {
     @Exclude
     fun getDateAsLocalDate(): LocalDate {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")

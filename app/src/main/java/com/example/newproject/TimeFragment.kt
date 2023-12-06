@@ -74,6 +74,11 @@ class TimeFragment : Fragment() {
             binding.recyclerViewSat.layoutManager = LinearLayoutManager(context)
             binding.recyclerViewSat.adapter = saturdayAdapter
 
+            val addButton = binding.fixschaddbutton
+            addButton.setOnClickListener {
+                val dialog = FixedScheduleDialogFragment()
+                dialog.show(parentFragmentManager, "FixedScheduleDialogFragment")
+            }
         }
 
     }
