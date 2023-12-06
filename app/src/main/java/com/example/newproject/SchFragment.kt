@@ -1,6 +1,5 @@
 package com.example.newproject
 
-import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,18 +8,13 @@ import android.view.ViewGroup
 import android.widget.CalendarView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newproject.databinding.FragmentSchBinding
-import android.widget.TextView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import java.util.Calendar
 import com.example.newproject.viewmodel.Schviewmodel
-import com.example.newproject.EventAdapter
-import java.text.SimpleDateFormat
+import com.example.newproject.Adapter.EventAdapter
+import com.example.newproject.Dialog.ScheduleDialogFragment
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
 
 
 class SchFragment : Fragment(), ScheduleDialogFragment.OnScheduleAddedListener, EventAdapter.OnItemActionListener {

@@ -1,6 +1,5 @@
 package com.example.newproject
 
-import android.os.Binder
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.newproject.Adapter.TimeAdapter
+import com.example.newproject.Dialog.FixedScheduleDialogFragment
+import com.example.newproject.Dialog.FixedScheduleEditDialog
 import com.example.newproject.databinding.FragmentTimeBinding
 import com.example.newproject.viewmodel.Schviewmodel
 import java.time.DayOfWeek
@@ -78,6 +80,11 @@ class TimeFragment : Fragment() {
             addButton.setOnClickListener {
                 val dialog = FixedScheduleDialogFragment()
                 dialog.show(parentFragmentManager, "FixedScheduleDialogFragment")
+            }
+            val editfixedbutton = binding.editfixedschbutton
+            editfixedbutton.setOnClickListener {
+                val dialog2 = FixedScheduleEditDialog.newInstance(viewModel)
+                dialog2.show(parentFragmentManager, "FixedScheduleEditDialog")
             }
         }
 

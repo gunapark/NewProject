@@ -105,5 +105,13 @@
         android:layout_height="wrap_content"
         android:text="고정일정 추가"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/editfixedschbutton" />
+
+    <Button
+        android:id="@+id/editfixedschbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="고정일정 삭제"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

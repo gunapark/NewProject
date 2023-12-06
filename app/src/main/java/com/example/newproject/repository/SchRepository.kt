@@ -24,7 +24,7 @@ class SchRepository {
             userRef.child(userId).child(key).setValue(event)
         }
     }
-    fun deletEventFromDatabase(userId: String, event: Event){
+    fun deleteEventFromDatabase(userId: String, event: Event){
         userRef.child(userId).child(event.id).removeValue()
     }
     fun updateEventInDatabase(userId: String, event: Event) {
@@ -78,4 +78,27 @@ class SchRepository {
 
         return events
     }
+    fun getAllEvents(userId: String): LiveData<MutableList<Event>> {
+        val events = MutableLiveData<MutableList<Event>>()
+
+        userRef.child(userId).addValueEventListener(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<Event>()
+                snapshot.children.forEach {childSnapshot ->
+                    val event = childSnapshot.getValue(Event::class.java)
+                    event?.let {
+                        it.setDateFromLocalDate(it.getDateAsLocalDate())
+                        list.add(it)
+                    }
+                }
+                events.value = list
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+
+        return events
+    }
 }
+
